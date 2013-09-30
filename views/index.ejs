@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<title>vmstat.js</title>
+	<style type="text/css">
+	  body {background:#000; color:#eee; font-size:80%; font-family:monospace;}
+	  h1 {font-size:200%; font-weight:bold; text-shadow:1px 1px 0 #666;}
+	  h1 span {font-size:60%; color:#999; text-shadow:0 0 0 #666;}
+	  h2 {font-size:110%; text-shadow:1px 1px 0 #333;}
+	  a {color:#e66;}
+	  .about h2 {font-size:125%;}
+	  blockquote {margin:20px 20px;}
+	  pre {white-space:pre-wrap;}
+	  .about {margin-top:2em;}
+	  .mini {float:left; margin-right:10px;}
+	  .multi {overflow:hidden;}
+	  .wrap {width:610px; padding:5px 10px; margin:0 auto;}
+	</style>
+  </head>
+  <body>
+	<div class="wrap">
+	  <header>
+		<h1>vmstat.js <span>realtime server monitor, websocket, node.js + socket.io</span></h1>
+	  </header>
+
+	  <div>
+		<h2>cpu:</h2>
+		<canvas id="cpu" width="590" height="50"></canvas>
+		<div id="cpu-stat"></div>
+	  </div>
+
+	  <div>
+		<h2>memory:</h2>
+		<canvas id="memory" width="590" height="50"></canvas>
+		<div id="memory-stat"></div>
+	  </div>
+
+	  <div class="multi">
+		<div class="mini">
+		  <h2>procs:</h2>
+		  <canvas id="procs" width="140" height="50"></canvas>
+		  <div id="procs-stat"></div>
+		</div>
+		<div class="mini">
+		  <h2>io:</h2>
+		  <canvas id="io" width="140" height="50"></canvas>
+		  <div id="io-stat"></div>
+		</div>
+		<div class="mini">
+		  <h2>system:</h2>
+		  <canvas id="system" width="140" height="50"></canvas>
+		  <div id="system-stat"></div>
+		</div>
+		<div class="mini">
+		  <h2>swap:</h2>
+		  <canvas id="swap" width="140" height="50"></canvas>
+		  <div id="swap-stat"></div>
+		</div>
+	  </div>
+
+	<div class="about">
+	  <h2>What is this?</h2>
+	  <p>Realtime server monitor, powered by vmstat, node.js and socket.io.</p>
+	  <p><em>** WARNING: CURRENTLY IN PRE-BETA STATUS. BEWARE BUGS! **</em></p>
+	  <h2>Supported browsers,</h2>
+	  <ul>
+		<li>Google Chrome 4+</li>
+		<li>Firefox 3+</li>
+		<li>Other canvas and websocket supported browsers.</li>
+	  </ul>
+
+	  <h2>Source code,</h2>
+	  <p>&quot;It's on me.&quot; <a href="http://bitbucket.org/yamorijp/vmstatjs">http://bitbucket.org/yamorijp/vmstatjs</a></p>
+
+	  <h2>Manpage of vmstat,</h2>
+	  <blockquote>
+<pre>
+VMSTAT(8)		 Linux Administrator's Manual		     VMSTAT(8)
+
+<b>NAME</b>
+       vmstat - Report virtual memory statistics
+
+<b>SYNOPSIS</b>
+       vmstat [-a] [-n] [-S unit] [delay [ count]]
+       vmstat [-s] [-n] [-S unit]
+       vmstat [-m] [-n] [delay [ count]]
+       vmstat [-d] [-n] [delay [ count]]
+       vmstat [-p disk partition] [-n] [delay [ count]]
+       vmstat [-f]
+       vmstat [-V]
+
+<b>DESCRIPTION</b>
+       vmstat  reports	information about processes, memory, paging, block IO,
+       traps, and cpu activity.
+
+       The first report produced gives averages since the last reboot.	 Addi-
+       tional  reports	give information on a sampling period of length delay.
+       The process and memory reports are instantaneous in either case.
+
+  <b>Options</b>
+       The -a switch displays active/inactive memory, given a 2.5.41 kernel or
+       better.
+
+       The  -f	switch displays the number of forks since boot.	 This includes
+       the fork, vfork, and clone system calls, and is equivalent to the total
+       number  of  tasks  created.  Each process is represented by one or more
+       tasks, depending on thread usage.  This display does not repeat.
+
+       The -m displays slabinfo.
+
+       The -n switch causes the header to be displayed only once  rather  than
+       periodically.
+
+       The  -s	switch	displays  a table of various event counters and memory
+       statistics. This display does not repeat.
+
+       delay is the delay between updates in seconds.  If no delay  is	speci-
+       fied, only one report is printed with the average values since boot.
+
+       count  is the number of updates.	 If no count is specified and delay is
+       defined, count defaults to infinity.
+
+       The -d reports disk statistics (2.5.70 or above required)
+
+       The -w enlarges field width for big memory sizes
+
+       The -p followed by some partition name for detailed statistics  (2.5.70
+       or above required)
+
+       The  -S	followed  by  k	 or K or m or M switches outputs between 1000,
+       1024, 1000000, or 1048576 bytes
+
+       The -V switch results in displaying version information.
+
+<b>FIELD DESCRIPTION FOR VM MODE</b>
+  <b>Procs</b>
+       r: The number of processes waiting for run time.
+       b: The number of processes in uninterruptible sleep.
+
+  <b>Memory</b>
+       swpd: the amount of virtual memory used.
+       free: the amount of idle memory.
+       buff: the amount of memory used as buffers.
+       cache: the amount of memory used as cache.
+       inact: the amount of inactive memory. (-a option)
+       active: the amount of active memory. (-a option)
+
+  <b>Swap</b>
+       si: Amount of memory swapped in from disk (/s).
+       so: Amount of memory swapped to disk (/s).
+
+  <b>IO</b>
+       bi: Blocks received from a block device (blocks/s).
+       bo: Blocks sent to a block device (blocks/s).
+
+  <b>System</b>
+       in: The number of interrupts per second, including the clock.
+       cs: The number of context switches per second.
+
+  <b>CPU</b>
+       These are percentages of total CPU time.
+       us: Time spent running non-kernel code. (user time, including nice time)
+       sy: Time spent running kernel code. (system time)
+       id: Time spent idle. Prior to Linux 2.5.41, this includes IO-wait time.
+       wa: Time spent waiting for IO. Prior to Linux 2.5.41, included in idle.
+       st: Time stolen from a virtual machine. Prior to Linux 2.6.11, unknown.
+
+<b>FIELD DESCRIPTION FOR DISK MODE</b>
+  <b>Reads</b>
+       total: Total reads completed successfully
+       merged: grouped reads (resulting in one I/O)
+       sectors: Sectors read successfully
+       ms: milliseconds spent reading
+
+  <b>Writes</b>
+       total: Total writes completed successfully
+       merged: grouped writes (resulting in one I/O)
+       sectors: Sectors written successfully
+       ms: milliseconds spent writing
+
+  <b>IO</b>
+       cur: I/O in progress
+       s: seconds spent for I/O
+
+<b>FIELD DESCRIPTION FOR DISK PARTITION MODE</b>
+       reads: Total number of reads issued to this partition
+       read sectors: Total read sectors for partition
+       writes : Total number of writes issued to this partition
+       requested writes: Total number of write requests made for partition
+
+<b>FIELD DESCRIPTION FOR SLAB MODE</b>
+       cache: Cache name
+       num: Number of currently active objects
+       total: Total number of available objects
+       size: Size of each object
+       pages: Number of pages with at least one active object
+       totpages: Total number of allocated pages
+       pslab: Number of pages per slab
+
+<b>NOTES</b>
+       vmstat does not require special permissions.
+
+       These reports are intended to help identify system bottlenecks.	 Linux
+       vmstat does not count itself as a running process.
+
+       All  linux  blocks  are	currently  1024	 bytes. Old kernels may report
+       blocks as 512 bytes, 2048 bytes, or 4096 bytes.
+
+       Since procps 3.1.9, vmstat lets you choose units (k, K, m,  M)  default
+       is K (1024 bytes) in the default mode
+
+       vmstat uses slabinfo 1.1	   FIXME
+
+<b>FILES</b>
+       /proc/meminfo
+       /proc/stat
+       /proc/*/stat
+
+<b>SEE ALSO</b>
+       iostat(1), sar(1), mpstat(1), ps(1), top(1), free(1)
+
+<b>BUGS</b>
+       Does not tabulate the block io per device or count the number of system
+       calls.
+
+<b>AUTHORS</b>
+       Written by Henry Ware &lt;al172@yfn.ysu.edu&gt;.
+       Fabian Frederick &lt;ffrederick@users.sourceforge.net&gt; (diskstat, slab, partitions...)
+
+Throatwobbler Ginkgo Labs	 27 July 1994			     VMSTAT(8)
+	  </pre>
+	  </blockquote>
+
+	  <h2>Dependency,</h2>
+	  <ul>
+		<li><a href="http://nodejs.org/">node.js</a></li>
+		<li><a href="http://expressjs.com/">express</a></li>
+		<li><a href="https://github.com/visionmedia/ejs">ejs</a></li>
+		<li><a href="http://socket.io/">socket.io</a></li>
+	  </ul>
+	</div>
+	</div>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://<%= host %>:<%= ioport %>/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="/js/smoothie.js"></script>
+	<script type="text/javascript" src="/js/monitor.js"></script>
+  </body>
+</html>
